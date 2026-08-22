@@ -1,4 +1,0 @@
-{
-    "model": "qwen3:8b",
-    "prompt": "You generate Git commit messages.\n\nAnalyze the following staged git diff.\n\nReturn ONLY a single Conventional Commit message.\nFormat:\ntype(scope): description\n\nRules:\n- Use feat, fix, refactor, docs, test, chore, or perf\n- Keep the description concise\n- Use imperative mood\n- Do not invent changes\n- Do not include markdown\n\n"
-}
