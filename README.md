@@ -1,4 +1,5 @@
 # GitSage
+![logo](ressources/logo.png)
 
 Local AI powered commit generator based on ur repository local change.
 
