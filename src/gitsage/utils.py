@@ -3,16 +3,30 @@ import sys
 import subprocess
 import json
 import pyperclip
+from pathlib import Path
+import toml
+import os
 
 def load_config():
+    DEFAULT_CONFIG = '''\
+model = "qwen3:8b"
+prompt = """You generate Git commit messages.\n\nAnalyze the following staged git diff.\n\nReturn ONLY a single Conventional Commit message.\nFormat:\ntype(scope): description\n\nRules:\n- Use feat, fix, refactor, docs, test, chore, or perf\n- Keep the description concise\n- Use imperative mood\n- Do not invent changes\n- Do not include markdown\n\n"""
+ollama_url = "http://localhost:11434"
+'''
+
+    config_path = Path.home() / ".config/gitsage/config.toml"
+    if not os.path.exists(config_path):
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(config_path, "w") as f:
+            f.write(DEFAULT_CONFIG)
     try:
-        with open("config.json", "r") as f:
-            return json.load(f)
+        with open(config_path, "r") as f:
+            return toml.load(f)
     except FileNotFoundError:
-        print("[ERROR] config.json not found.")
+        print(f"[ERROR] Config file not found at {config_path}.")
         sys.exit(1)
-    except json.JSONDecodeError:
-        print("[ERROR] Invalid JSON in config.json.")
+    except toml.TomlDecodeError:
+        print("[ERROR] Invalid TOML in config.toml.")
         sys.exit(1)
 
 def check_ollama():
@@ -41,10 +55,10 @@ def get_diff():
 
 def generate_commit_message(diff, config):
     response = requests.post(
-    "http://localhost:11434/api/generate",
-    json={
-        "model": "qwen3:8b",
-        "system": config["prompt"],
+        config["ollama_url"] + "/api/generate",
+        json={
+            "model": config["model"],
+            "system": config["prompt"],
         "prompt": f"Analyze this staged git diff:\n\n{diff}",
         "stream": True,
         "think": False,
