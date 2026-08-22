@@ -77,3 +77,9 @@ def draw_logo():
                               ██   ██
             ████████████      ███████{RESET}
 """)
+
+def print_help():
+    print("Usage: gitsage <command>\n")
+    print("Commands:\n")
+    print("  help      Show this help message")
+    print("  commit    Generate a commit message based on the staged changes")
