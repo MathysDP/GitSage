@@ -95,4 +95,4 @@ def print_help():
     print("  help              Show this help message")
     print("  commit            Generate a commit message based on the staged changes\n")
     print("Options:\n")
-    print("  --copy            Copy the output to the clipboard\n")
+    print("  --copy            Copy the output to the clipboard")
