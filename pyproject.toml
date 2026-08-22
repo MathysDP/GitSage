@@ -5,6 +5,7 @@ description = "Local LLM powered Git commit generator"
 requires-python = ">=3.10"
 dependencies = [
     "requests",
+    "pyperclip",
 ]
 
 [project.scripts]

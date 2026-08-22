@@ -2,6 +2,7 @@ import requests
 import sys
 import subprocess
 import json
+import pyperclip
 
 def load_config():
     try:
@@ -50,13 +51,16 @@ def generate_commit_message(diff, config):
     },
     stream=True,
     )
+    output = ""
     for line in response.iter_lines():
         if not line:
             continue
         data = json.loads(line)
         if data.get("response") != "":
+            output += data["response"]
             print(data["response"], end="", flush=True)
     print()
+    return output
 
 def draw_logo():
     GREEN = "\033[38;5;71m"
@@ -78,8 +82,17 @@ def draw_logo():
             ████████████      ███████{RESET}
 """)
 
+def copy_to_clipboard(text):
+    try:
+        pyperclip.copy(text)
+        print("[INFO] Output copied to clipboard.")
+    except pyperclip.PyperclipException:
+        print(f"[ERROR] Failed to copy to clipboard.\n [WARNING] Ensure you have a clipboard utility installed !")
+
 def print_help():
-    print("Usage: gitsage <command>\n")
+    print("Usage: gitsage <command> <options>\n")
     print("Commands:\n")
-    print("  help      Show this help message")
-    print("  commit    Generate a commit message based on the staged changes")
+    print("  help              Show this help message")
+    print("  commit            Generate a commit message based on the staged changes\n")
+    print("Options:\n")
+    print("  --copy            Copy the output to the clipboard\n")
