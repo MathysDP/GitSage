@@ -6,6 +6,7 @@ Local AI powered commit generator based on ur repository local change.
 
 ### Prerequirements
 
-    - Python3
-    - Python3-Venv
+    - Python>=3.10
+    - Python3-venv
+    - Python3-pip
     - Ollama
