@@ -52,8 +52,9 @@ $> gitsage <command> <options>
 
 ### Commands
 
-    help              Show this help message
-    commit            Generate a commit message based on the staged changes
+    help                   Show this help message
+    commit                 Generate a commit message based on the staged changes
+    version/-v/--version   Show the version of GitSage
 
 ### Options
 

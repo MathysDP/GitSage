@@ -6,6 +6,7 @@ import pyperclip
 from pathlib import Path
 import toml
 import os
+from importlib.metadata import version
 
 def load_config():
     DEFAULT_CONFIG = '''\
@@ -106,7 +107,12 @@ def copy_to_clipboard(text):
 def print_help():
     print("Usage: gitsage <command> <options>\n")
     print("Commands:\n")
-    print("  help              Show this help message")
-    print("  commit            Generate a commit message based on the staged changes\n")
+    print("  help                   Show this help message")
+    print("  commit                 Generate a commit message based on the staged changes")
+    print("  version/-v/--version   Show the version of GitSage\n")
     print("Options:\n")
     print("  --copy            Copy the output to the clipboard")
+
+
+def print_version():
+    print(f"GitSage v{version('gitsage')}")

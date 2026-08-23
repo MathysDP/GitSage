@@ -22,6 +22,10 @@ def main():
         utils.print_help()
         return 0
 
+    if sys.argv[1] in ["version", "-v", "--version"]:
+        utils.print_version()
+        return 0
+
     command = sys.argv[1]
     copy = sys.argv[2] == "--copy" if len(sys.argv) > 2 else False
 
