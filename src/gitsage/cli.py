@@ -12,10 +12,15 @@ def commit(copy=False):
         utils.copy_to_clipboard(commit)
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] in ["help", "-h", "--help"]:
+    if len(sys.argv) < 2:
         utils.draw_logo()
         utils.print_help()
-        sys.exit(1)
+        return 1
+
+    if sys.argv[1] in ["help", "-h", "--help"]:
+        utils.draw_logo()
+        utils.print_help()
+        return 0
 
     command = sys.argv[1]
     copy = sys.argv[2] == "--copy" if len(sys.argv) > 2 else False
@@ -25,4 +30,4 @@ def main():
     else:
         print(f"Unknown command: {command}\n")
         print("Use 'gitsage help' to see available commands.")
-        sys.exit(1)
+        return 1
