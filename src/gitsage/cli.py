@@ -3,7 +3,7 @@ import sys
 
 def commit(copy=False):
     if not utils.check_ollama():
-        print("[ERROR] Ollama is not running.\nTry:\n\t> ollama pull 'your model'")
+        utils.print_error("Ollama is not running.\nTry:\n\t> ollama pull 'your model'")
         sys.exit(1)
     config = utils.load_config()
     diff = utils.get_diff()
@@ -32,6 +32,6 @@ def main():
     if command == "commit":
         commit(copy=copy)
     else:
-        print(f"Unknown command: {command}\n")
-        print("Use 'gitsage help' to see available commands.")
+        utils.print_error(f"Unknown command: {command}\n")
+        print("Usage: gitsage <command> <options>")
         return 1

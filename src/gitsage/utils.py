@@ -24,10 +24,10 @@ ollama_url = "http://localhost:11434"
         with open(config_path, "r") as f:
             return toml.load(f)
     except FileNotFoundError:
-        print(f"[ERROR] Config file not found at {config_path}.")
+        print_error(f"Config file not found at {config_path}.")
         sys.exit(1)
     except toml.TomlDecodeError:
-        print("[ERROR] Invalid TOML in config.toml.")
+        print_error("Invalid TOML in config.toml.")
         sys.exit(1)
 
 def check_ollama():
@@ -51,7 +51,7 @@ def get_diff():
         )
         return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"[ERROR] Failed to get git diff: {e}")
+        print_error(f"Failed to get git diff: {e}")
         sys.exit(1)
 
 def generate_commit_message(diff, config):
@@ -100,9 +100,11 @@ def draw_logo():
 def copy_to_clipboard(text):
     try:
         pyperclip.copy(text)
-        print("[INFO] Output copied to clipboard.")
+        print()
+        print_info("Output copied to clipboard.")
     except pyperclip.PyperclipException:
-        print(f"[ERROR] Failed to copy to clipboard.\n [WARNING] Ensure you have a clipboard utility installed !")
+        print_error(f"Failed to copy to clipboard.\n")
+        print_warning("Ensure you have a clipboard utility installed !")
 
 def print_help():
     print("Usage: gitsage <command> <options>\n")
@@ -116,3 +118,18 @@ def print_help():
 
 def print_version():
     print(f"GitSage v{version('gitsage')}")
+
+def print_error(message):
+    RED = "\033[31m"
+    RESET = "\033[0m"
+    print(f"{RED}[ERROR]: {message}{RESET}")
+
+def print_warning(message):
+    YELLOW = "\033[33m"
+    RESET = "\033[0m"
+    print(f"{YELLOW}[WARNING]: {message}{RESET}")
+
+def print_info(message):
+    BLUE = "\033[34m"
+    RESET = "\033[0m"
+    print(f"{BLUE}[INFO]: {message}{RESET}")
