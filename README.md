@@ -8,7 +8,7 @@ Local AI powered commit generator based on ur repository local change.
 ### Prerequirements
 
     - Python>=3.10
-    - Python3-pip or Python3-pipx
+    - Python3-pip or pipx
     - Python3-venv (optional if using pipx)
     - Ollama
 
@@ -35,13 +35,13 @@ $> source .venv/bin/activate
 #### with pip :
 
 ```bash
-(.venv) $> pip install gitsage
+(.venv) $> pip install gitsage-local
 ```
 
 #### with pipx :
 
 ```bash
-$> pipx install gitsage
+$> pipx install gitsage-local
 ```
 
 ## Usage
