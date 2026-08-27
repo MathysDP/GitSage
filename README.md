@@ -11,6 +11,7 @@ Local AI powered commit generator based on ur repository local change.
     - Python3-pip or pipx
     - Python3-venv (optional if using pipx)
     - Ollama
+    - utilitaire de commande pour gérer le presse-papier (ex: wl_clipboard, xclip, pbcopy, clip, etc..)
 
 #### Start Ollama
 
