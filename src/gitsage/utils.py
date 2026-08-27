@@ -55,27 +55,31 @@ def get_diff():
         sys.exit(1)
 
 def generate_commit_message(diff, config):
-    response = requests.post(
-        config["ollama_url"] + "/api/generate",
-        json={
-            "model": config["model"],
-            "system": config["prompt"],
-        "prompt": f"Analyze this staged git diff:\n\n{diff}",
-        "stream": True,
-        "think": False,
-    },
-    stream=True,
-    )
-    output = ""
-    for line in response.iter_lines():
-        if not line:
-            continue
-        data = json.loads(line)
-        if data.get("response") != "":
-            output += data["response"]
-            print(data["response"], end="", flush=True)
-    print()
-    return output
+    try:
+        response = requests.post(
+            config["ollama_url"] + "/api/generate",
+            json={
+                "model": config["model"],
+                "system": config["prompt"],
+            "prompt": f"Analyze this staged git diff:\n\n{diff}",
+            "stream": True,
+            "think": False,
+        },
+        stream=True,
+        )
+        output = ""
+        for line in response.iter_lines():
+            if not line:
+                continue
+            data = json.loads(line)
+            if data.get("response") != "":
+                output += data["response"]
+                print(data["response"], end="", flush=True)
+        print()
+        return output
+    except requests.RequestException as e:
+        print_error(f"Failed to generate commit message: {e}")
+        sys.exit(1)
 
 def draw_logo():
     GREEN = "\033[38;5;71m"
