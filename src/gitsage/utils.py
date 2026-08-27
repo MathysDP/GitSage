@@ -117,7 +117,7 @@ def print_help():
 
 
 def print_version():
-    print(f"GitSage v{version('gitsage')}")
+    print(f"GitSage v{version('gitsage-local')}")
 
 def print_error(message):
     RED = "\033[31m"
