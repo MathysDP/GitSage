@@ -8,11 +8,21 @@ import toml
 import os
 from importlib.metadata import version
 
+DEFAULT_EXCLUDE = [
+    "*.lock",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "*.min.js",
+    "*.min.css",
+    "*.map",
+]
+
 def load_config():
-    DEFAULT_CONFIG = '''\
+    DEFAULT_CONFIG = f'''\
 model = "qwen3:8b"
 prompt = """You generate Git commit messages.\n\nAnalyze the following staged git diff.\n\nReturn ONLY a single Conventional Commit message.\nFormat:\ntype(scope): description\n\nRules:\n- Use feat, fix, refactor, docs, test, chore, or perf\n- Keep the description concise\n- Use imperative mood\n- Do not invent changes\n- Do not include markdown\n\n"""
 ollama_url = "http://localhost:11434"
+exclude = {json.dumps(DEFAULT_EXCLUDE)}
 '''
 
     config_path = Path.home() / ".config/gitsage/config.toml"
@@ -41,10 +51,14 @@ def check_ollama():
     except requests.RequestException:
         return False
 
-def get_diff():
+def get_diff(config):
+    excludes = [
+        f":(top,exclude,glob)**/{pattern}"
+        for pattern in config.get("exclude", DEFAULT_EXCLUDE)
+    ]
     try:
         result = subprocess.run(
-            ["git", "diff", "--cached"],
+            ["git", "diff", "--cached", "-U1", "--", ":/", *excludes],
             capture_output=True,
             text=True,
             check=True,
@@ -54,18 +68,37 @@ def get_diff():
         print_error(f"Failed to get git diff: {e}")
         sys.exit(1)
 
+MAX_DIFF_CHARS = 48000
+CHARS_PER_TOKEN = 3
+RESPONSE_TOKENS = 512
+
+def build_prompt(diff):
+    if len(diff) > MAX_DIFF_CHARS:
+        print_warning("Diff is large, only the beginning is sent to the model.")
+        diff = diff[:MAX_DIFF_CHARS] + "\n[diff truncated]"
+    return (
+        f"Analyze this staged git diff:\n\n{diff}\n\n"
+        "Reply with ONLY the single Conventional Commit message, nothing else."
+    )
+
+def context_size(*texts):
+    tokens = sum(len(t) for t in texts) // CHARS_PER_TOKEN + RESPONSE_TOKENS
+    return max(4096, -(-tokens // 1024) * 1024)
+
 def generate_commit_message(diff, config):
+    prompt = build_prompt(diff)
     try:
         response = requests.post(
             config["ollama_url"] + "/api/generate",
             json={
                 "model": config["model"],
                 "system": config["prompt"],
-            "prompt": f"Analyze this staged git diff:\n\n{diff}",
-            "stream": True,
-            "think": False,
-        },
-        stream=True,
+                "prompt": prompt,
+                "stream": True,
+                "think": False,
+                "options": {"num_ctx": context_size(config["prompt"], prompt)},
+            },
+            stream=True,
         )
         output = ""
         for line in response.iter_lines():

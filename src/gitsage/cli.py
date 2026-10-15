@@ -6,7 +6,7 @@ def commit(copy=False):
         utils.print_error("Ollama is not running.\nTry:\n\t> ollama pull 'your model'")
         sys.exit(1)
     config = utils.load_config()
-    diff = utils.get_diff()
+    diff = utils.get_diff(config)
     commit = utils.generate_commit_message(diff, config)
     if copy:
         utils.copy_to_clipboard(commit)

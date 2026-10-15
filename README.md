@@ -86,6 +86,9 @@ Rules:
 
 """
 ollama_url = "http://localhost:11434"
+exclude = ["*.lock", "package-lock.json", "pnpm-lock.yaml", "*.min.js", "*.min.css", "*.map"]
 ```
 
-You can modify the `model`, `prompt`, and `ollama_url` values in the configuration file to customize the behavior of GitSage according to your needs.
+`exclude` lists glob patterns of files left out of the diff sent to the model (matched at any depth), which keeps lockfiles and generated files from filling the context. If the key is missing, the default list above is used.
+
+You can modify the `model`, `prompt`, `ollama_url`, and `exclude` values in the configuration file to customize the behavior of GitSage according to your needs.
